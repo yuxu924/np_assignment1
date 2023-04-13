@@ -65,6 +65,59 @@ int main(int argc, char* argv[]) {
         printf("%s", recv_buf);
     }
 
+    double fresult;
+    int result;
+    char answer[50];    // 允许50个字符存放自己计算出的答案
+    char* op;    // 保存计算类型（加减乘除）
+    op = strtok(recv_buf, " ");
+    int length;
+    if (op[0] == 'f') {
+        double value1 = atof(strtok(NULL, " "));
+        double value2 = atof(strtok(NULL, " "));
+        if (op[1] == 'a') {
+            fresult = value1 + value2;
+        }
+        else if (op[1] == 's') {
+            fresult = value1 - value2;
+        }
+        else if (op[1] == 'm') {
+            fresult = value1 * value2;
+        }
+        else if (op[1] == 'd') {
+            fresult = value1 / value2;
+        }
+        length = snprintf(answer, sizeof(answer), "%.8g\n", fresult);
+        printf("%f\n", fresult);
+    }
+    else {
+        int value1 = atoi(strtok(NULL, " "));
+        int value2 = atoi(strtok(NULL, " "));
+        if (op[0] == 'a') {
+            result = value1 + value2;
+        }
+        else if (op[0] == 's') {
+            result = value1 - value2;
+        }
+        else if (op[0] == 'm') {
+            result = value1 * value2;
+        }
+        else if (op[0] == 'd') {
+            result = value1 / value2;
+        }
+        length = snprintf(answer, sizeof(answer), "%d\n", result);
+        printf("%d\n", result);
+    }
+    send(sockfd, answer, length, 0);
+    // 接收新数据
+    memset(recv_buf, 0, sizeof(recv_buf));
+    recv_num = read(sockfd, recv_buf, sizeof(recv_buf));
+    if (recv_num == -1) {
+        perror("failed to receive data from server");
+    }
+    else if (recv_num > 0) {
+        printf("%s", recv_buf);
+    }
+
     close(sockfd);
 #endif
 }
